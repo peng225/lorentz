@@ -1,0 +1,22 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  overflow-x: hidden;
+}
+
+body {
+  padding: 20px;
+  font-family: sans-serif;
+}
+
+#box {
+  width: min(650px, 90vw);
+  height: min(600px, 90vw);
+  max-width: 100%;
+}
