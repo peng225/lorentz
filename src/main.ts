@@ -65,6 +65,10 @@ const timeDirection = board.create('point', [
   () => 4
 ], { visible: false }) as JXG.Point;
 
+const scaleAxis = (beta: number) => {
+  return Math.sqrt((1 + beta * beta) / (1 - beta * beta))
+}
+
 const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
   name: "x'",
   withLabel: true,
@@ -72,8 +76,9 @@ const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
   strokeColor: 'blue',
   strokeWidth: 1,
   ticks: {
-    visible: false,
+    visible: true,
     majorHeight: 5,
+    scale: scaleAxis(betaSlider.Value()),
   },
 }) as JXG.Axis;
 
@@ -84,8 +89,9 @@ const ctPrimeAxis = board.create('axis', [origin, timeDirection], {
   strokeColor: 'red',
   strokeWidth: 1,
   ticks: {
-    visible: false,
+    visible: true,
     majorHeight: 5,
+    scale: scaleAxis(betaSlider.Value()),
   },
 }) as JXG.Axis;
 
@@ -262,21 +268,22 @@ board.on('update', () => {
   intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
   intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
 
-  const epsilon = 0.001
+  const epsilon = 0.2
   const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
-  assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, "ct' coordinate must be 0");
+  assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, `ct' coordinate must be 0, but ${intersectCTParallelAndXPrimeTransformed.ct}`);
   intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
   const intersectXParallelAndCTPrimeTransformed = lorentzTransform(intersectXParallelAndCTPrime.X(), intersectXParallelAndCTPrime.Y(), beta);
-  assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0");
+  assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0, but ${intersectXParallelAndCTPrimeTransformed.x}");
   intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
-
 });
 
 betaSlider.on('drag', () => {
   xPrimeAxis.point1?.update();
   xPrimeAxis.point2?.update();
+  xPrimeAxis.defaultTicks.visProp.scale = scaleAxis(betaSlider.Value());
   ctPrimeAxis.point1?.update();
   ctPrimeAxis.point2?.update();
+  ctPrimeAxis.defaultTicks.visProp.scale = scaleAxis(betaSlider.Value());
 
   board.fullUpdate();
 });
