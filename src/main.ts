@@ -37,7 +37,7 @@ const betaSlider = board.create('slider', [
 // S' axes
 // ----------------------------------------
 
-board.create('line', [
+const sPrimeXAxis = board.create('line', [
   [0, 0],
   () => [1, betaSlider.Value()],
 ], {
@@ -52,7 +52,7 @@ board.create('line', [
   },
 });
 
-board.create('line', [
+const sPrimeCTAxis = board.create('line', [
   [0, 0],
   () => [betaSlider.Value(), 1],
 ], {
@@ -66,21 +66,6 @@ board.create('line', [
     offset: [10, 10],
   },
 });
-
-// ----------------------------------------
-// S' coordinate labels
-// ----------------------------------------
-//
-// x'軸上で x'=n, ct'=0 となる点は
-//
-//   x  = gamma * n
-//   ct = gamma * beta * n
-//
-// ct'軸上で x'=0, ct'=n となる点は
-//
-//   x  = gamma * beta * n
-//   ct = gamma * n
-//
 
 for (let n = -10; n <= 10; n++) {
 
@@ -137,13 +122,14 @@ const pointP = board.create('point', [2, 2.5], {
   strokeColor: 'black',
   fillColor: 'black',
   fixed: false,
+  showInfoBox: false,
 });
 
 // ----------------------------------------
 // P-parallel S lines
 // ----------------------------------------
 
-board.create('line', [
+const xParallel = board.create('line', [
   [0, () => pointP.Y()],
   [1, () => pointP.Y()],
 ], {
@@ -153,7 +139,7 @@ board.create('line', [
   fixed: true,
 });
 
-board.create('line', [
+const ctParallel = board.create('line', [
   [() => pointP.X(), 0],
   [() => pointP.X(), 1],
 ], {
@@ -167,7 +153,7 @@ board.create('line', [
 // P-parallel x' line
 // ----------------------------------------
 
-board.create('line', [
+const xPrimeParallel = board.create('line', [
   [() => pointP.X(), () => pointP.Y()],
   [() => pointP.X() + 1, () => pointP.Y() + betaSlider.Value()],
 ], {
@@ -181,7 +167,7 @@ board.create('line', [
 // P-parallel ct' line
 // ----------------------------------------
 
-board.create('line', [
+const ctPrimeParallel = board.create('line', [
   [() => pointP.X(), () => pointP.Y()],
   [() => pointP.X() + betaSlider.Value(), () => pointP.Y() + 1],
 ], {
@@ -209,34 +195,79 @@ function lorentzTransform(
 }
 
 // ----------------------------------------
-// Coordinate text near P
+// Coordinate text
 // ----------------------------------------
 
-board.create('text', [
-  () => pointP.X() + 0.2,
-  () => pointP.Y() + 0.4,
-  () => {
-    const x = pointP.X();
-    const ct = pointP.Y();
-    const beta = betaSlider.Value();
-
-    const transformed = lorentzTransform(x, ct, beta);
-
-    return `
-            <span style="color: black">
-                S: (x, ct) = (${x.toFixed(2)}, ${ct.toFixed(2)})
-            </span>
-            <br>
-            <span style="color: blue">
-                S': (x', ct') = (${transformed.x.toFixed(2)}, ${transformed.ct.toFixed(2)})
-            </span>
-        `;
+const intersectX = board.create('intersection', [ctParallel, board.defaultAxes.x, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'gray'
   },
-], {
-  fixed: true,
-  anchorX: 'left',
-  anchorY: 'bottom',
-  fontSize: 14,
+  fillColor: 'gray',
+  strokeColor: 'gray'
+}) as JXG.Point;
+
+const intersectY = board.create('intersection', [xParallel, board.defaultAxes.y, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'gray'
+  },
+  fillColor: 'gray',
+  strokeColor: 'gray'
+}) as JXG.Point;
+
+const intersectXPrime = board.create('intersection', [ctPrimeParallel, sPrimeXAxis, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'blue'
+  },
+  fillColor: 'blue',
+  strokeColor: 'blue'
+}) as JXG.Point;
+
+const intersectCTPrime = board.create('intersection', [xPrimeParallel, sPrimeCTAxis, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'red'
+  },
+  fillColor: 'red',
+  strokeColor: 'red'
+}) as JXG.Point;
+
+board.on('update', () => {
+  const x = pointP.X();
+  const ct = pointP.Y();
+  const beta = betaSlider.Value();
+
+  // Update S coordinate
+  if (intersectX.label) {
+    intersectX.label.setText(`${intersectX.X().toFixed(2)}`);
+  }
+  if (intersectY.label) {
+    intersectY.label.setText(`${intersectY.Y().toFixed(2)}`);
+  }
+
+  // Update S' coordinate
+  if (intersectXPrime.label) {
+    const transformed = lorentzTransform(x, ct, beta);
+    intersectXPrime.label.setText(`${transformed.x.toFixed(2)}`);
+  }
+  if (intersectCTPrime.label) {
+    const transformed = lorentzTransform(x, ct, beta);
+    intersectCTPrime.label.setText(`${transformed.ct.toFixed(2)}`);
+  }
 });
 
 // 初期描画
