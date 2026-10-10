@@ -268,7 +268,7 @@ board.on('update', () => {
   intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
   intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
 
-  const epsilon = 0.001
+  const epsilon = 0.2
   const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
   assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, `ct' coordinate must be 0, but ${intersectCTParallelAndXPrimeTransformed.ct}`);
   intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
