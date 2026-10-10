@@ -32,6 +32,7 @@ const betaSlider = board.create('slider', [
 ], {
   name: 'β (V/c)',
   snapWidth: 0.01,
+  frozen: true,
 });
 
 // ----------------------------------------
