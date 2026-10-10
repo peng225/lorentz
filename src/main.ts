@@ -205,5 +205,14 @@ board.on('update', () => {
   }
 });
 
+betaSlider.on('drag', () => {
+  xPrimeAxis.point1?.update();
+  xPrimeAxis.point2?.update();
+  ctPrimeAxis.point1?.update();
+  ctPrimeAxis.point2?.update();
+
+  board.fullUpdate();
+});
+
 // 初期描画
 board.update();
