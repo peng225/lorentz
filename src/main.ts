@@ -19,6 +19,22 @@ const board = JXG.JSXGraph.initBoard('box', {
     factorX: 1.1,
     factorY: 1.1,
   },
+  defaultAxes: {
+    x: {
+      name: "x",
+      withLabel: true,
+      label: { color: 'green', offset: [10, 10] },
+      strokeColor: 'green',
+      strokeWidth: 1,
+    },
+    y: {
+      name: "ct",
+      withLabel: true,
+      label: { color: 'orange', offset: [10, 10] },
+      strokeColor: 'orange',
+      strokeWidth: 1,
+    },
+  }
 });
 
 // ----------------------------------------
@@ -54,7 +70,8 @@ const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
   strokeColor: 'blue',
   strokeWidth: 1,
   ticks: {
-    visible: true, majorHeight: 5,
+    visible: false,
+    majorHeight: 5,
   },
 }) as JXG.Axis;
 
@@ -65,7 +82,8 @@ const ctPrimeAxis = board.create('axis', [origin, timeDirection], {
   strokeColor: 'red',
   strokeWidth: 1,
   ticks: {
-    visible: true, majorHeight: 5,
+    visible: false,
+    majorHeight: 5,
   },
 }) as JXG.Axis;
 
@@ -133,31 +151,57 @@ const ctPrimeParallel = board.create('line', [
 // ----------------------------------------
 // Coordinate text
 // ----------------------------------------
-const intersectX = board.create('intersection', [ctParallel, board.defaultAxes.x, 0], {
+// Inter sections with S axes
+const intersectCTParallelAndX = board.create('intersection', [ctParallel, board.defaultAxes.x, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
   label: {
     offset: [10, -15],
-    color: 'gray'
+    color: 'green'
   },
-  fillColor: 'gray',
-  strokeColor: 'gray'
+  fillColor: 'green',
+  strokeColor: 'green'
 }) as JXG.Point;
 
-const intersectY = board.create('intersection', [xParallel, board.defaultAxes.y, 0], {
+const intersectXParallelAndY = board.create('intersection', [xParallel, board.defaultAxes.y, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
   label: {
     offset: [10, -15],
-    color: 'gray'
+    color: 'orange'
   },
-  fillColor: 'gray',
-  strokeColor: 'gray'
+  fillColor: 'orange',
+  strokeColor: 'orange'
 }) as JXG.Point;
 
-const intersectXPrime = board.create('intersection', [ctPrimeParallel, xPrimeAxis, 0], {
+const intersectCTPrimeParallelAndX = board.create('intersection', [ctPrimeParallel, board.defaultAxes.x, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'green'
+  },
+  fillColor: 'green',
+  strokeColor: 'green'
+}) as JXG.Point;
+
+const intersectXPrimeParallelAndY = board.create('intersection', [xPrimeParallel, board.defaultAxes.y, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'orange'
+  },
+  fillColor: 'orange',
+  strokeColor: 'orange'
+}) as JXG.Point;
+
+// Inter sections with S' axes
+const intersectCTPrimeParallelAndXPrime = board.create('intersection', [ctPrimeParallel, xPrimeAxis, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
@@ -169,7 +213,31 @@ const intersectXPrime = board.create('intersection', [ctPrimeParallel, xPrimeAxi
   strokeColor: 'blue'
 }) as JXG.Point;
 
-const intersectCTPrime = board.create('intersection', [xPrimeParallel, ctPrimeAxis, 0], {
+const intersectXPrimeParallelAndCTPrime = board.create('intersection', [xPrimeParallel, ctPrimeAxis, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'red'
+  },
+  fillColor: 'red',
+  strokeColor: 'red'
+}) as JXG.Point;
+
+const intersectCTParallelAndXPrime = board.create('intersection', [ctParallel, xPrimeAxis, 0], {
+  name: '',
+  withLabel: true,
+  showInfoBox: false,
+  label: {
+    offset: [10, -15],
+    color: 'blue'
+  },
+  fillColor: 'blue',
+  strokeColor: 'blue'
+}) as JXG.Point;
+
+const intersectXParallelAndCTPrime = board.create('intersection', [xParallel, ctPrimeAxis, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
@@ -182,27 +250,30 @@ const intersectCTPrime = board.create('intersection', [xPrimeParallel, ctPrimeAx
 }) as JXG.Point;
 
 board.on('update', () => {
-  const x = pointP.X();
-  const ct = pointP.Y();
+  intersectCTParallelAndX.label?.setText(`${intersectCTParallelAndX.X().toFixed(2)}`);
+  intersectXParallelAndY.label?.setText(`${intersectXParallelAndY.Y().toFixed(2)}`);
+  intersectCTPrimeParallelAndX.label?.setText(`${intersectCTPrimeParallelAndX.X().toFixed(2)}`);
+  intersectXPrimeParallelAndY.label?.setText(`${intersectXPrimeParallelAndY.Y().toFixed(2)}`);
+
   const beta = betaSlider.Value();
+  const pTransformed = lorentzTransform(pointP.X(), pointP.Y(), beta);
+  intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
+  intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
 
-  // Update S coordinate
-  if (intersectX.label) {
-    intersectX.label.setText(`${intersectX.X().toFixed(2)}`);
-  }
-  if (intersectY.label) {
-    intersectY.label.setText(`${intersectY.Y().toFixed(2)}`);
-  }
+  const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
+  intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
+  const intersectXParallelAndCTPrimeTransformed = lorentzTransform(intersectXParallelAndCTPrime.X(), intersectXParallelAndCTPrime.Y(), beta);
+  intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
 
-  // Update S' coordinate
-  if (intersectXPrime.label) {
-    const transformed = lorentzTransform(x, ct, beta);
-    intersectXPrime.label.setText(`${transformed.x.toFixed(2)}`);
-  }
-  if (intersectCTPrime.label) {
-    const transformed = lorentzTransform(x, ct, beta);
-    intersectCTPrime.label.setText(`${transformed.ct.toFixed(2)}`);
-  }
+});
+
+betaSlider.on('drag', () => {
+  xPrimeAxis.point1?.update();
+  xPrimeAxis.point2?.update();
+  ctPrimeAxis.point1?.update();
+  ctPrimeAxis.point2?.update();
+
+  board.fullUpdate();
 });
 
 // 初期描画
