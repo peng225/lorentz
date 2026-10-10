@@ -1,3 +1,5 @@
+import { lorentzTransform } from './lorentz';
+
 import JXG from 'jsxgraph';
 import './style.css';
 
@@ -23,7 +25,6 @@ const board = JXG.JSXGraph.initBoard('box', {
 // ----------------------------------------
 // beta slider
 // ----------------------------------------
-
 const betaSlider = board.create('slider', [
   [1, -4],
   [4, -4],
@@ -36,7 +37,6 @@ const betaSlider = board.create('slider', [
 // ----------------------------------------
 // S' axes
 // ----------------------------------------
-
 const sPrimeXAxis = board.create('line', [
   [0, 0],
   () => [1, betaSlider.Value()],
@@ -68,8 +68,7 @@ const sPrimeCTAxis = board.create('line', [
 });
 
 for (let n = -10; n <= 10; n++) {
-
-  // x' positive side
+  // x' axis
   board.create('text', [
     () => {
       const beta = betaSlider.Value();
@@ -90,7 +89,7 @@ for (let n = -10; n <= 10; n++) {
     strokeColor: 'blue',
   });
 
-  // ct' positive side
+  // ct' axis
   board.create('text', [
     () => {
       const beta = betaSlider.Value();
@@ -115,7 +114,6 @@ for (let n = -10; n <= 10; n++) {
 // ----------------------------------------
 // Point P
 // ----------------------------------------
-
 const pointP = board.create('point', [2, 2.5], {
   name: 'P',
   size: 5,
@@ -123,12 +121,11 @@ const pointP = board.create('point', [2, 2.5], {
   fillColor: 'black',
   fixed: false,
   showInfoBox: false,
-});
+}) as JXG.Point;;
 
 // ----------------------------------------
 // P-parallel S lines
 // ----------------------------------------
-
 const xParallel = board.create('line', [
   [0, () => pointP.Y()],
   [1, () => pointP.Y()],
@@ -152,7 +149,6 @@ const ctParallel = board.create('line', [
 // ----------------------------------------
 // P-parallel x' line
 // ----------------------------------------
-
 const xPrimeParallel = board.create('line', [
   [() => pointP.X(), () => pointP.Y()],
   [() => pointP.X() + 1, () => pointP.Y() + betaSlider.Value()],
@@ -176,23 +172,6 @@ const ctPrimeParallel = board.create('line', [
   dash: 2,
   fixed: true,
 });
-
-// ----------------------------------------
-// Lorentz transform
-// ----------------------------------------
-
-function lorentzTransform(
-  x: number,
-  ct: number,
-  beta: number,
-) {
-  const gamma = 1 / Math.sqrt(1 - beta * beta);
-
-  return {
-    x: gamma * (x - beta * ct),
-    ct: gamma * (ct - beta * x),
-  };
-}
 
 // ----------------------------------------
 // Coordinate text
