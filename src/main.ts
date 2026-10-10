@@ -1,4 +1,6 @@
 import { lorentzTransform } from './lorentz';
+import { assert } from './assert';
+
 
 import JXG from 'jsxgraph';
 import './style.css';
@@ -260,9 +262,12 @@ board.on('update', () => {
   intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
   intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
 
+  const epsilon = 0.001
   const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
+  assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, "ct' coordinate must be 0");
   intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
   const intersectXParallelAndCTPrimeTransformed = lorentzTransform(intersectXParallelAndCTPrime.X(), intersectXParallelAndCTPrime.Y(), beta);
+  assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0");
   intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
 
 });
