@@ -6,7 +6,6 @@ import './style.css';
 const board = JXG.JSXGraph.initBoard('box', {
   boundingBox: [-6, 6, 6, -6],
   axis: true,
-  grid: true,
   showCopyright: false,
   showNavigation: false,
   pan: {
@@ -15,11 +14,11 @@ const board = JXG.JSXGraph.initBoard('box', {
     needShift: false,
   },
   zoom: {
-    wheel: true,      // Enable/disable mouse wheel zooming
-    needShift: false, // If true, requires Shift key + wheel
-    factorX: 1.25,    // Zoom factor in X direction
-    factorY: 1.25     // Zoom factor in Y direction
-  }
+    wheel: true,
+    needShift: false,
+    factorX: 1.1,
+    factorY: 1.1,
+  },
 });
 
 // ----------------------------------------
@@ -38,79 +37,37 @@ const betaSlider = board.create('slider', [
 // ----------------------------------------
 // S' axes
 // ----------------------------------------
-const sPrimeXAxis = board.create('line', [
-  [0, 0],
-  () => [1, betaSlider.Value()],
-], {
-  strokeWidth: 3,
-  strokeColor: 'blue',
-  fixed: true,
+const origin = board.create('point', [0, 0], { visible: false }) as JXG.Point;
+const spaceDirection = board.create('point', [
+  () => 4,
+  () => betaSlider.Value() * 4
+], { visible: false }) as JXG.Point;
+const timeDirection = board.create('point', [
+  () => betaSlider.Value() * 4,
+  () => 4
+], { visible: false }) as JXG.Point;
+
+const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
   name: "x'",
   withLabel: true,
-  label: {
-    position: 'rt',
-    offset: [10, -15],
+  label: { color: 'blue', offset: [10, 10] },
+  strokeColor: 'blue',
+  strokeWidth: 1,
+  ticks: {
+    visible: true, majorHeight: 5,
   },
-});
+}) as JXG.Axis;
 
-const sPrimeCTAxis = board.create('line', [
-  [0, 0],
-  () => [betaSlider.Value(), 1],
-], {
-  strokeWidth: 3,
-  strokeColor: 'red',
-  fixed: true,
+const ctPrimeAxis = board.create('axis', [origin, timeDirection], {
   name: "ct'",
   withLabel: true,
-  label: {
-    position: 'rt',
-    offset: [10, 10],
+  label: { color: 'red', offset: [10, 10] },
+  strokeColor: 'red',
+  strokeWidth: 1,
+  ticks: {
+    visible: true, majorHeight: 5,
   },
-});
-
-for (let n = -10; n <= 10; n++) {
-  // x' axis
-  board.create('text', [
-    () => {
-      const beta = betaSlider.Value();
-      const gamma = 1 / Math.sqrt(1 - beta * beta);
-      return gamma * n;
-    },
-    () => {
-      const beta = betaSlider.Value();
-      const gamma = 1 / Math.sqrt(1 - beta * beta);
-      return gamma * beta * n;
-    },
-    String(n),
-  ], {
-    fixed: true,
-    anchorX: 'middle',
-    anchorY: 'bottom',
-    fontSize: 12,
-    strokeColor: 'blue',
-  });
-
-  // ct' axis
-  board.create('text', [
-    () => {
-      const beta = betaSlider.Value();
-      const gamma = 1 / Math.sqrt(1 - beta * beta);
-      return gamma * beta * n;
-    },
-    () => {
-      const beta = betaSlider.Value();
-      const gamma = 1 / Math.sqrt(1 - beta * beta);
-      return gamma * n;
-    },
-    String(n),
-  ], {
-    fixed: true,
-    anchorX: 'left',
-    anchorY: 'middle',
-    fontSize: 12,
-    strokeColor: 'red',
-  });
-}
+}) as JXG.Axis;
 
 // ----------------------------------------
 // Point P
@@ -163,7 +120,6 @@ const xPrimeParallel = board.create('line', [
 // ----------------------------------------
 // P-parallel ct' line
 // ----------------------------------------
-
 const ctPrimeParallel = board.create('line', [
   [() => pointP.X(), () => pointP.Y()],
   [() => pointP.X() + betaSlider.Value(), () => pointP.Y() + 1],
@@ -177,7 +133,6 @@ const ctPrimeParallel = board.create('line', [
 // ----------------------------------------
 // Coordinate text
 // ----------------------------------------
-
 const intersectX = board.create('intersection', [ctParallel, board.defaultAxes.x, 0], {
   name: '',
   withLabel: true,
@@ -202,7 +157,7 @@ const intersectY = board.create('intersection', [xParallel, board.defaultAxes.y,
   strokeColor: 'gray'
 }) as JXG.Point;
 
-const intersectXPrime = board.create('intersection', [ctPrimeParallel, sPrimeXAxis, 0], {
+const intersectXPrime = board.create('intersection', [ctPrimeParallel, xPrimeAxis, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
@@ -214,7 +169,7 @@ const intersectXPrime = board.create('intersection', [ctPrimeParallel, sPrimeXAx
   strokeColor: 'blue'
 }) as JXG.Point;
 
-const intersectCTPrime = board.create('intersection', [xPrimeParallel, sPrimeCTAxis, 0], {
+const intersectCTPrime = board.create('intersection', [xPrimeParallel, ctPrimeAxis, 0], {
   name: '',
   withLabel: true,
   showInfoBox: false,
