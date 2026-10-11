@@ -262,6 +262,7 @@ const pXInput = board.create(
   [2, -3.5, '', 'P_x = '],
   {
     cssStyle: 'width: 75px',
+    fixed: true,
     frozen: true,
   },
 );
@@ -271,6 +272,7 @@ const pYInput = board.create(
   [2, -4, '', 'P_y = '],
   {
     cssStyle: 'width: 75px',
+    fixed: true,
     frozen: true,
   },
 );
