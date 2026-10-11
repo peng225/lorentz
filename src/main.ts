@@ -25,14 +25,14 @@ const board = JXG.JSXGraph.initBoard('box', {
     x: {
       name: "x",
       withLabel: true,
-      label: { color: 'green', offset: [10, 10] },
+      label: { color: 'green', offset: [0, 10], position: 'rt' },
       strokeColor: 'green',
       strokeWidth: 1,
     },
     y: {
       name: "ct",
       withLabel: true,
-      label: { color: 'orange', offset: [10, 10] },
+      label: { color: 'orange', offset: [5, 0], position: 'rt' },
       strokeColor: 'orange',
       strokeWidth: 1,
     },
@@ -72,7 +72,7 @@ const scaleAxis = (beta: number) => {
 const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
   name: "x'",
   withLabel: true,
-  label: { color: 'blue', offset: [10, 10] },
+  label: { color: 'blue', offset: [0, 10], position: 'rt' },
   strokeColor: 'blue',
   strokeWidth: 1,
   ticks: {
@@ -85,7 +85,7 @@ const xPrimeAxis = board.create('axis', [origin, spaceDirection], {
 const ctPrimeAxis = board.create('axis', [origin, timeDirection], {
   name: "ct'",
   withLabel: true,
-  label: { color: 'red', offset: [10, 10] },
+  label: { color: 'red', offset: [5, 0], position: 'rt' },
   strokeColor: 'red',
   strokeWidth: 1,
   ticks: {
