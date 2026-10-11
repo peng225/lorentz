@@ -259,9 +259,9 @@ const intersectXParallelAndCTPrime = board.create('intersection', [xParallel, ct
 
 const pXInput = board.create(
   'input',
-  [2, -3.5, '', 'P_x = '],
+  [1.5, -3.2, '', 'P_x = '],
   {
-    cssStyle: 'width: 75px',
+    cssStyle: 'width: clamp(35px, 8vw, 100px);',
     fixed: true,
     frozen: true,
   },
@@ -269,9 +269,9 @@ const pXInput = board.create(
 
 const pYInput = board.create(
   'input',
-  [2, -4, '', 'P_y = '],
+  [1.5, -4, '', 'P_y = '],
   {
-    cssStyle: 'width: 75px',
+    cssStyle: 'width: clamp(35px, 8vw, 100px);',
     fixed: true,
     frozen: true,
   },
@@ -287,7 +287,7 @@ const outOfBoard = (x: number, y: number) => {
 }
 
 board.create('button', [
-  4, -3.5,
+  4, -3.2,
   'Apply',
   () => {
     const x = Number(pXInput.Value());
