@@ -43,8 +43,8 @@ const board = JXG.JSXGraph.initBoard('box', {
 // beta slider
 // ----------------------------------------
 const betaSlider = board.create('slider', [
-  [1, -4],
-  [4, -4],
+  [0.5, -5],
+  [4, -5],
   [-0.9, 0.5, 0.9],
 ], {
   name: 'β (V/c)',
@@ -256,6 +256,63 @@ const intersectXParallelAndCTPrime = board.create('intersection', [xParallel, ct
   fillColor: 'red',
   strokeColor: 'red'
 }) as JXG.Point;
+
+const pXInput = board.create(
+  'input',
+  [2, -3.5, '', 'P_x = '],
+  {
+    cssStyle: 'width: 75px',
+    frozen: true,
+  },
+);
+
+const pYInput = board.create(
+  'input',
+  [2, -4, '', 'P_y = '],
+  {
+    cssStyle: 'width: 75px',
+    frozen: true,
+  },
+);
+
+const outOfBoard = (x: number, y: number) => {
+  const bbox = board.getBoundingBox()
+  if (x < bbox[0] || bbox[2] < x ||
+    y < bbox[3] || bbox[1] < y) {
+    return true
+  }
+  return false
+}
+
+board.create('button', [
+  4, -3.5,
+  'Apply',
+  () => {
+    const x = Number(pXInput.Value());
+    const y = Number(pYInput.Value());
+
+    if (
+      pXInput.Value().trim() === '' ||
+      pYInput.Value().trim() === '' ||
+      !Number.isFinite(x) ||
+      !Number.isFinite(y)
+    ) {
+      console.log('error: invalid input');
+      return;
+    }
+
+    if (outOfBoard(x, y)) {
+      alert('error: input coordinate is out of the board');
+      return;
+    }
+
+    pointP.setPosition(JXG.COORDS_BY_USER, [x, y]);
+    board.update();
+  }],
+  {
+    frozen: true,
+  }
+);
 
 board.on('update', () => {
   // The internal calculation of each geometrical objects are
