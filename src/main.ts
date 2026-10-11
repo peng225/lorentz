@@ -258,33 +258,46 @@ const intersectXParallelAndCTPrime = board.create('intersection', [xParallel, ct
 }) as JXG.Point;
 
 board.on('update', () => {
-  intersectCTParallelAndX.label?.setText(`${intersectCTParallelAndX.X().toFixed(2)}`);
-  intersectXParallelAndY.label?.setText(`${intersectXParallelAndY.Y().toFixed(2)}`);
-  intersectCTPrimeParallelAndX.label?.setText(`${intersectCTPrimeParallelAndX.X().toFixed(2)}`);
-  intersectXPrimeParallelAndY.label?.setText(`${intersectXPrimeParallelAndY.Y().toFixed(2)}`);
+  // The internal calculation of each geometrical objects are
+  // sometimes delayed, which causes the invalid result.
+  // To mitigate the effect of the delay, the calculation
+  // is slightly delayed by using setTimeout.
+  setTimeout(() => {
+    // We should update some geometric objects only when
+    // the value of `betaSlider` is changed.
+    // Thus, it is ideal to move these lines of code to
+    // the slider 'drag' and 'up' event handler.
+    // However, surprisingly, the slider value is sometimes
+    // changed without these slider events.
+    // That is the reason why these lines of code are
+    // located here.
+    const beta = betaSlider.Value();
 
-  const beta = betaSlider.Value();
-  const pTransformed = lorentzTransform(pointP.X(), pointP.Y(), beta);
-  intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
-  intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
+    xPrimeAxis.update();
+    xPrimeAxis.defaultTicks.visProp.scale = scaleAxis(beta);
+    ctPrimeAxis.update();
+    ctPrimeAxis.defaultTicks.visProp.scale = scaleAxis(beta);
 
-  const epsilon = 0.2
-  const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
-  assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, `ct' coordinate must be 0, but ${intersectCTParallelAndXPrimeTransformed.ct}`);
-  intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
-  const intersectXParallelAndCTPrimeTransformed = lorentzTransform(intersectXParallelAndCTPrime.X(), intersectXParallelAndCTPrime.Y(), beta);
-  assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0, but ${intersectXParallelAndCTPrimeTransformed.x}");
-  intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
+    intersectCTParallelAndX.label?.setText(`${intersectCTParallelAndX.X().toFixed(2)}`);
+    intersectXParallelAndY.label?.setText(`${intersectXParallelAndY.Y().toFixed(2)}`);
+    intersectCTPrimeParallelAndX.label?.setText(`${intersectCTPrimeParallelAndX.X().toFixed(2)}`);
+    intersectXPrimeParallelAndY.label?.setText(`${intersectXPrimeParallelAndY.Y().toFixed(2)}`);
+
+    const pTransformed = lorentzTransform(pointP.X(), pointP.Y(), beta);
+    intersectCTPrimeParallelAndXPrime.label?.setText(`${pTransformed.x.toFixed(2)}`);
+    intersectXPrimeParallelAndCTPrime.label?.setText(`${pTransformed.ct.toFixed(2)}`);
+
+    const epsilon = 0.001
+    const intersectCTParallelAndXPrimeTransformed = lorentzTransform(intersectCTParallelAndXPrime.X(), intersectCTParallelAndXPrime.Y(), beta);
+    assert(Math.abs(intersectCTParallelAndXPrimeTransformed.ct) <= epsilon, `ct' coordinate must be 0, but ${intersectCTParallelAndXPrimeTransformed.ct}`);
+    intersectCTParallelAndXPrime.label?.setText(`${intersectCTParallelAndXPrimeTransformed.x.toFixed(2)}`);
+    const intersectXParallelAndCTPrimeTransformed = lorentzTransform(intersectXParallelAndCTPrime.X(), intersectXParallelAndCTPrime.Y(), beta);
+    assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0, but ${intersectXParallelAndCTPrimeTransformed.x}");
+    intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
+  }, 0);
 });
 
 betaSlider.on('drag', () => {
-  xPrimeAxis.point1?.update();
-  xPrimeAxis.point2?.update();
-  xPrimeAxis.defaultTicks.visProp.scale = scaleAxis(betaSlider.Value());
-  ctPrimeAxis.point1?.update();
-  ctPrimeAxis.point2?.update();
-  ctPrimeAxis.defaultTicks.visProp.scale = scaleAxis(betaSlider.Value());
-
   board.fullUpdate();
 });
 
