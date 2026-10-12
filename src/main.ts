@@ -312,6 +312,7 @@ board.create('button', [
     board.update();
   }],
   {
+    fixed: true,
     frozen: true,
   }
 );
