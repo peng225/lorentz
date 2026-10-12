@@ -286,7 +286,7 @@ const outOfBoard = (x: number, y: number) => {
   return false
 }
 
-board.create('button', [
+const applyButton = board.create('button', [
   4, -3.2,
   'Apply',
   () => {
@@ -355,6 +355,19 @@ board.on('update', () => {
     assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0, but ${intersectXParallelAndCTPrimeTransformed.x}");
     intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
   }, 0);
+});
+
+let controlsVisible = true;
+
+board.containerObj.addEventListener('dblclick', () => {
+  controlsVisible = !controlsVisible;
+
+  pXInput.visProp.visible = controlsVisible;
+  pCTInput.visProp.visible = controlsVisible;
+  applyButton.visProp.visible = controlsVisible;
+  betaSlider.visProp.visible = controlsVisible;
+
+  board.update();
 });
 
 betaSlider.on('drag', () => {
