@@ -259,18 +259,20 @@ const intersectXParallelAndCTPrime = board.create('intersection', [xParallel, ct
 
 const pXInput = board.create(
   'input',
-  [2, -3.5, '', 'P_x = '],
+  [1.5, -3.2, '', 'P_x = '],
   {
-    cssStyle: 'width: 75px',
+    cssStyle: 'width: clamp(35px, 8vw, 100px);',
+    fixed: true,
     frozen: true,
   },
 );
 
-const pYInput = board.create(
+const pCTInput = board.create(
   'input',
-  [2, -4, '', 'P_y = '],
+  [1.5, -4, '', 'P_{ct} = '],
   {
-    cssStyle: 'width: 75px',
+    cssStyle: 'width: clamp(35px, 8vw, 100px);',
+    fixed: true,
     frozen: true,
   },
 );
@@ -285,28 +287,28 @@ const outOfBoard = (x: number, y: number) => {
 }
 
 board.create('button', [
-  4, -3.5,
+  4, -3.2,
   'Apply',
   () => {
     const x = Number(pXInput.Value());
-    const y = Number(pYInput.Value());
+    const ct = Number(pCTInput.Value());
 
     if (
       pXInput.Value().trim() === '' ||
-      pYInput.Value().trim() === '' ||
+      pCTInput.Value().trim() === '' ||
       !Number.isFinite(x) ||
-      !Number.isFinite(y)
+      !Number.isFinite(ct)
     ) {
       console.log('error: invalid input');
       return;
     }
 
-    if (outOfBoard(x, y)) {
+    if (outOfBoard(x, ct)) {
       alert('error: input coordinate is out of the board');
       return;
     }
 
-    pointP.setPosition(JXG.COORDS_BY_USER, [x, y]);
+    pointP.setPosition(JXG.COORDS_BY_USER, [x, ct]);
     board.update();
   }],
   {
