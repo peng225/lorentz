@@ -114,7 +114,7 @@ const xParallel = board.create('line', [
   [0, () => pointP.Y()],
   [1, () => pointP.Y()],
 ], {
-  strokeColor: '#777',
+  strokeColor: 'green',
   strokeWidth: 1,
   dash: 2,
   fixed: true,
@@ -124,7 +124,7 @@ const ctParallel = board.create('line', [
   [() => pointP.X(), 0],
   [() => pointP.X(), 1],
 ], {
-  strokeColor: '#777',
+  strokeColor: 'orange',
   strokeWidth: 1,
   dash: 2,
   fixed: true,
@@ -286,7 +286,7 @@ const outOfBoard = (x: number, y: number) => {
   return false
 }
 
-board.create('button', [
+const applyButton = board.create('button', [
   4, -3.2,
   'Apply',
   () => {
@@ -312,6 +312,7 @@ board.create('button', [
     board.update();
   }],
   {
+    fixed: true,
     frozen: true,
   }
 );
@@ -354,6 +355,19 @@ board.on('update', () => {
     assert(Math.abs(intersectXParallelAndCTPrimeTransformed.x) <= epsilon, "x' coordinate must be 0, but ${intersectXParallelAndCTPrimeTransformed.x}");
     intersectXParallelAndCTPrime.label?.setText(`${intersectXParallelAndCTPrimeTransformed.ct.toFixed(2)}`);
   }, 0);
+});
+
+let controlsVisible = true;
+
+board.containerObj.addEventListener('dblclick', () => {
+  controlsVisible = !controlsVisible;
+
+  pXInput.visProp.visible = controlsVisible;
+  pCTInput.visProp.visible = controlsVisible;
+  applyButton.visProp.visible = controlsVisible;
+  betaSlider.visProp.visible = controlsVisible;
+
+  board.update();
 });
 
 betaSlider.on('drag', () => {
