@@ -114,7 +114,7 @@ const xParallel = board.create('line', [
   [0, () => pointP.Y()],
   [1, () => pointP.Y()],
 ], {
-  strokeColor: '#777',
+  strokeColor: 'green',
   strokeWidth: 1,
   dash: 2,
   fixed: true,
@@ -124,7 +124,7 @@ const ctParallel = board.create('line', [
   [() => pointP.X(), 0],
   [() => pointP.X(), 1],
 ], {
-  strokeColor: '#777',
+  strokeColor: 'orange',
   strokeWidth: 1,
   dash: 2,
   fixed: true,
