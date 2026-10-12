@@ -267,9 +267,9 @@ const pXInput = board.create(
   },
 );
 
-const pYInput = board.create(
+const pCTInput = board.create(
   'input',
-  [1.5, -4, '', 'P_y = '],
+  [1.5, -4, '', 'P_{ct} = '],
   {
     cssStyle: 'width: clamp(35px, 8vw, 100px);',
     fixed: true,
@@ -291,24 +291,24 @@ board.create('button', [
   'Apply',
   () => {
     const x = Number(pXInput.Value());
-    const y = Number(pYInput.Value());
+    const ct = Number(pCTInput.Value());
 
     if (
       pXInput.Value().trim() === '' ||
-      pYInput.Value().trim() === '' ||
+      pCTInput.Value().trim() === '' ||
       !Number.isFinite(x) ||
-      !Number.isFinite(y)
+      !Number.isFinite(ct)
     ) {
       console.log('error: invalid input');
       return;
     }
 
-    if (outOfBoard(x, y)) {
+    if (outOfBoard(x, ct)) {
       alert('error: input coordinate is out of the board');
       return;
     }
 
-    pointP.setPosition(JXG.COORDS_BY_USER, [x, y]);
+    pointP.setPosition(JXG.COORDS_BY_USER, [x, ct]);
     board.update();
   }],
   {
